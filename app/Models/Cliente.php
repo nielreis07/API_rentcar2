@@ -11,4 +11,10 @@ class Cliente extends Model
     protected $fillable = ['nome', 'email', 'senha', 'telefone', 'cnh'];
 
     protected $hidden = ['senha'];
+
+    // Relacionamento: um cliente tem muitos carros
+    public function carros()
+    {
+        return $this->hasMany(Carro::class, 'cliente_id');
+    }
 }

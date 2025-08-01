@@ -9,37 +9,40 @@ class CarroService
     public function criar(array $dados)
     {
         $carro = Carro::create($dados);
-        return $carro;
+        return $carro->load('cliente'); // retorna já com os dados do cliente
     }
 
     public function buscarTodos()
     {
-        return Carro::all();
+        return Carro::with('cliente')->get(); // retorna todos os carros com cliente
     }
 
     public function buscarCarro($id)
     {
-        return Carro::find($id);
+        return Carro::with('cliente')->findOrFail($id); // retorna um carro com cliente
     }
 
     public function atualizar(array $dados, $id)
     {
-        $carro = Carro::find($id);
-        if ($carro) {
-            $carro->nome = $dados['nome'];
-            $carro->marca = $dados['marca'];
-            $carro->modelo = $dados['modelo'];
-            $carro->placa = $dados['placa'];
-            $carro->preco = $dados['preco'];
-            $carro->save();
-        }
-        return $carro;
+        $carro = Carro::findOrFail($id);
+
+        $carro->update([
+            'nome' => $dados['nome'],
+            'marca' => $dados['marca'],
+            'modelo' => $dados['modelo'],
+            'placa' => $dados['placa'],
+            'preco' => $dados['preco'],
+            'cliente_id' => $dados['cliente_id'] ?? $carro->cliente_id,
+        ]);
+
+        return $carro->load('cliente');
     }
 
     public function deletar($id)
     {
-        $carro = Carro::find($id);
+        $carro = Carro::findOrFail($id);
         $carro->delete();
+
         return $carro;
     }
 }
